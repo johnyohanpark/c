@@ -12,19 +12,21 @@
 
 int getLine(char line[], int limit);
 int detab(char buffer[], int index);
+void insertSpaces(char s[]);
 void copy(char to[], char from[], int offset);
 
 int main()
 {
     char buf[MAXLINE], res[MAXLINE];
-    int n, m, end;
+    int n, del, end;
 
     end = 0;
-    while ((n = getLine(buf, MAXLINE) > 0)) {       // get line, store in buf[]
-        m = detab(buf, n);                        // detab the line, return new index to m
+    while ((n = getLine(buf, MAXLINE)) > 0) {       // get line, store in buf[]
+        del = detab(buf, n);                        // detab the line, return new index to m
         copy(res, buf, end);                     // copy buffer to res
-        end += m;                              // update res offset, EOF index
+        end = end + n + (del * TABSTOP) - del;          // update res offset, EOF index
     }
+    res[end] = '\0';
     printf("%s%d\n", res, end);
     return 0;
 }
@@ -39,15 +41,41 @@ int getLine(char line[], int lim)
         line[i] = c;
         ++i;
     }
-    //printf("%s", line);
+    line[i] = '\0';
     return i;
 }
 
 int detab(char s[], int idx)
 {
+    char tmp[MAXLINE];
+    int del;
 
+    --idx;                      //would be on null char now newline char
+    del = 0;                    //number of tabs deleted
+    for (; idx >= 0; --idx) {   //parse through line back to front
+        if (s[idx] == '\t') {   //if tab found
+            ++del;                      //+1 tab deleted
+            copy(tmp, &s[idx+1], 0);    //copy line from found tab into temp
+            insertSpaces(&s[idx]);      //insert spaces from index where tab was found
+            copy(&s[idx+TABSTOP], tmp, 0);  //paste after spaces rest of line stored in tmp
+        }
+    }
+    return del;
+}
+
+void insertSpaces(char s[])
+{
+    int i;
+
+    for (i = 0; i < TABSTOP; ++i)
+        s[i] = ' ';
 }
 void copy(char to[], char from[], int offset)
 {
+    int i;
 
+    i = 0;
+    while ((to[i + offset] = from[i]) != '\n')
+        ++i;
+    //to[i + offset] = '\0';
 }
