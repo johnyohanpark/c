@@ -4,14 +4,12 @@
  * character that occurs before the n-th column of input. Make sure
  * your program does something intelligent with very long lines,
  * and if there are no blanks or tabs before the specified column. 
- * 
- */
-
+ */ 
 #include <stdio.h>
 #define LIMIT 70
 #define MAXLINE 1000
 
-int getline(char line[]);
+int getLine(char line[]);
 void fold(char line[], int length);
 
 int main()
@@ -19,14 +17,14 @@ int main()
     int len;
     char buf[MAXLINE];
     
-    while ((len = getline(buf)) > 0) {
+    while ((len = getLine(buf)) > 0) {
         if (len > LIMIT)
             fold(buf, len);
         printf("%s\n", buf);
     }
 }
 
-int getline(char s[])
+int getLine(char s[])
 {
     int c,i;
 
